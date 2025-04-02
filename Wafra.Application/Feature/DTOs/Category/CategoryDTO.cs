@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wafra.Core.Entites;
 
-namespace Wafra.Core.Interfaces
+namespace Wafra.Application.Feature.DTOs.Category
 {
-    public interface ICategoryRepository : IGenericRepositroy<Category>
+    public record CategoryDTO
     {
+        public string Name {  get; set; }
     }
 }

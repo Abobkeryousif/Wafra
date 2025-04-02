@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using Wafra.Core.Interfaces;
+using Wafra.Application.Contracts.Interfaces;
 using Wafra.Infrastructure.Data;
 namespace Wafra.Infrastructure.Repository
 {
-    public class GenericRepository<T> : IGenericRepositroy<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
 
@@ -25,15 +25,15 @@ namespace Wafra.Infrastructure.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> order = null, string[] include = null)
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string[] include = null)
         {
-            var result = Sync(filter, order, include);
+            var result = Sync(filter, orderBy, include);
             return await result.FirstOrDefaultAsync();
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> order = null, string[] include = null)
+        public async Task<List<T>> GetALLAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string[] include = null)
         {
-            var result = Sync(filter,order,include);
+            var result = Sync(filter,orderBy,include);
             return await result.ToListAsync();
         }
 
@@ -47,7 +47,7 @@ namespace Wafra.Infrastructure.Repository
             return await _context.Set<T>().AnyAsync(pre);
         }
 
-        public IQueryable<T> Sync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> order = null, string[] include = null)
+        public IQueryable<T> Sync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string[] include = null)
         {
             IQueryable<T> query = _context.Set<T>();
             if(filter != null)
@@ -55,8 +55,8 @@ namespace Wafra.Infrastructure.Repository
             if(include != null)
                 foreach(var item in include)
                     query = query.Include(item);
-            if (order != null)
-                order(query);
+            if (orderBy != null)
+                orderBy(query);
             return query;
         }
 

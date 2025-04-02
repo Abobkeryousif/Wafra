@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Wafra.Core.Entites;
 
-namespace Wafra.Core.Interfaces
+namespace Wafra.Application.Contracts.Interfaces
 {
-    public interface IUserRepository : IGenericRepositroy<User>
+    public interface ICategoryRepository : IGenericRepository<Category>
     {
     }
 }
