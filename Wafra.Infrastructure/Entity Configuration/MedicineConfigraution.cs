@@ -4,9 +4,9 @@ using Wafra.Core.Entites;
 
 namespace Wafra.Infrastructure.Entity_Configuration
 {
-    public class MedicineConfigraution : IEntityTypeConfiguration<Medicine>
+    public class MedicineConfigraution : IEntityTypeConfiguration<Medicines>
     {
-        public void Configure(EntityTypeBuilder<Medicine> builder)
+        public void Configure(EntityTypeBuilder<Medicines> builder)
         {
             builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
             builder.Property(x=> x.Price).IsRequired();

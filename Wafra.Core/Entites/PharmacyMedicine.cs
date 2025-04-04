@@ -11,11 +11,11 @@ namespace Wafra.Core.Entites
         public int Id { get; set; }
 
         public int PharmacyId  { get; set; }
-        public Pharmacy pharmacy { get; set; }
+        public Pharmacies pharmacy { get; set; }
 
         public int MedicineId { get; set; }
 
-        public Medicine Medicine { get; set; }
+        public Medicines Medicine { get; set; }
 
         public int Stock { get; set; }
     }

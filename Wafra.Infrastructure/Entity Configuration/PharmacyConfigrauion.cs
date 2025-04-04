@@ -9,9 +9,9 @@ using Wafra.Core.Entites;
 
 namespace Wafra.Infrastructure.Entity_Configuration
 {
-    public class PharmacyConfigrauion : IEntityTypeConfiguration<Pharmacy>
+    public class PharmacyConfigrauion : IEntityTypeConfiguration<Pharmacies>
     {
-        public void Configure(EntityTypeBuilder<Pharmacy> builder)
+        public void Configure(EntityTypeBuilder<Pharmacies> builder)
         {
             builder.Property(x=> x.Name).IsRequired().HasMaxLength(50);
             builder.Property(op=> op.Phone).IsRequired().HasMaxLength(50);

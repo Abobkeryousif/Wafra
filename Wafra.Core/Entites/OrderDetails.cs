@@ -15,7 +15,7 @@ namespace Wafra.Core.Entites
 
         public int MedicineId { get; set; }
 
-        public Medicine Medicine { get; set; }
+        public Medicines Medicine { get; set; }
 
         public DateTime OrderDate => DateTime.Now;
     }

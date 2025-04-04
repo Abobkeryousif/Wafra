@@ -18,7 +18,7 @@ namespace Wafra.api.Controllers
             _sender = sender;
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> CreateAsync(CategoryDTO categoryDTO) 
         {
             var result = await _sender.Send(new CreateCategoryCommand(categoryDTO));
@@ -32,21 +32,21 @@ namespace Wafra.api.Controllers
             var result = await _sender.Send(new GetCategorieaCommand());
             return Ok(result);
         }
-        [HttpGet("{Id}")]
+        [HttpGet("GetById")]
         public async Task<IActionResult> GetByIdAsync(int Id) 
         {
             var result = await _sender.Send(new GetByIdCategoryCommand(Id));
             return Ok(result);
         }
-        [HttpPut("{Id}")]
+        [HttpPut("Update")]
 
-        public async Task<IActionResult> UpdateAsync(int Id , CategoryDTO categoryDTO) 
+        public async Task<IActionResult> UpdateAsync([FromQuery]int Id , CategoryDTO categoryDTO) 
         {
-            var result = await _sender.Send(new  UpdateCategoryCommand(Id,categoryDTO));
+            var result = await _sender.Send(new UpdateCategoryCommand(Id,categoryDTO));
             return Ok(result);
         }
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("Delete")]
 
         public async Task<IActionResult> DeleteAsync(int Id) 
         {

@@ -13,6 +13,8 @@ namespace Wafra.Infrastructure.DependencyInjection
         {
             services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(configuration.GetConnectionString("Default")));
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IPharamcyRepository , PharmacyRepository>();
+            services.AddScoped<IMedicineRepository, MedicinRepository>();
             return services;
         }
     }

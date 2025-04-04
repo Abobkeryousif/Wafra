@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Wafra.Application.Feature.DTOs.Pharmacy;
+using Wafra.Core.Entites;
 
 
 namespace Wafra.Application.Mapping
@@ -7,6 +9,7 @@ namespace Wafra.Application.Mapping
     {
         public AutoMapping()
         {
+            
             
         }
     }

@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Wafra.Core\Wafra.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Feature\Commands\Pharmacy\" />
-  </ItemGroup>
-
 </Project>

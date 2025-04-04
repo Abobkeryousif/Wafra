@@ -1,6 +1,6 @@
 ﻿namespace Wafra.Core.Entites
 {
-    public class Pharmacy
+    public class Pharmacies
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -8,7 +8,7 @@
 
         public string location { get; set; }
 
-        public List<Medicine> Medicines { get; set; }  
+        public List<Medicines> Medicines { get; set; }  
 
         public List<PharmacyMedicine> pharmacyMedicines { get; set; }
 

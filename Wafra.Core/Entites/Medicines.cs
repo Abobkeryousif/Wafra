@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Wafra.Core.Entites
+﻿namespace Wafra.Core.Entites
 {
-    public class  Medicine
+    public class  Medicines
     {
         public int Id { get; set; }
         
@@ -16,7 +10,7 @@ namespace Wafra.Core.Entites
 
         public int CategoryId { get; set; }
 
-        public List<Pharmacy> Pharmacies { get; set; }
+        public List<Pharmacies> Pharmacies { get; set; }
 
         public Category Category { get; set; }
 

@@ -27,9 +27,8 @@ namespace Wafra.Application.Feature.Commands.Categories
             var result = await _categoryRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
                 if(result == null) 
                   return new HttpResult<string>(HttpStatusCode.NotFound , $"Not Found With ID: {request.Id}");
-                var Category = new Category { CategoryName = result.CategoryName };
-            await _categoryRepository.DeleteAsync(Category);
-            return new HttpResult<string>(HttpStatusCode.NotFound, "Delete Complete!");
+            await _categoryRepository.DeleteAsync(result);
+            return new HttpResult<string>(HttpStatusCode.OK, "Delete Complete!",result.CategoryName);
         }
     }
 }

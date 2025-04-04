@@ -9,7 +9,7 @@ namespace Wafra.Core.Entites
         public List<OrderDetails> OrderDetails { get; set; }
         public User Users { get; set; }
         public Decimal TotalPrice { get; set; }
-        public Pharmacy Pharmacy { get; set; }
+        public Pharmacies Pharmacy { get; set; }
         public DateTime OrderDate => DateTime.UtcNow;
     }
 }

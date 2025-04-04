@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wafra.Core.Entites
+namespace Wafra.Application.Feature.DTOs.Category
 {
-    public class Category
+    public class GetCategory
     {
         public int Id { get; set; }
-        public string CategoryName { get; set; }
-        public List<Medicines> Medicines { get; set; }   
+        public string Name { get; set; }
     }
+
 }
