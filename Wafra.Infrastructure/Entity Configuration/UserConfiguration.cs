@@ -9,9 +9,9 @@ using Wafra.Core.Entites;
 
 namespace Wafra.Infrastructure.Entity_Configuration
 {
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class UserConfiguration : IEntityTypeConfiguration<Users>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Users> builder)
         {
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Phone).IsRequired();

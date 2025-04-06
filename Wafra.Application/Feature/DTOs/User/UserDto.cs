@@ -1,0 +1,13 @@
+﻿namespace Wafra.Application.Feature.DTOs.User
+{
+    public class UserDto
+    {
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+
+        public bool IsValid { get; set; }
+
+    }
+}

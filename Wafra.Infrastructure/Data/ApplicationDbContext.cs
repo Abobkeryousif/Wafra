@@ -15,7 +15,7 @@ namespace Wafra.Infrastructure.Data
         {
         }
 
-        public virtual DbSet<User> Users { get; set; }  
+        public virtual DbSet<Users> Users { get; set; }  
         public virtual DbSet<Pharmacies> Pharmacies { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Medicines> Medicines { get; set; }

@@ -1,12 +1,6 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Wafra.Application.Contracts.Interfaces;
-using Wafra.Application.Feature.DTOs.Category;
 using Wafra.Application.Feature.DTOs.Medicin;
 using Wafra.Core.Common;
 
