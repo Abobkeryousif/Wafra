@@ -1,7 +1,4 @@
-﻿
-using System.Net;
-
-
+﻿using System.Net;
 namespace Wafra.Core.Common
 {
     public class HttpResult<T> where T : class

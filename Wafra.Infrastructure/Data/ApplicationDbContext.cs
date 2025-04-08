@@ -27,6 +27,8 @@ namespace Wafra.Infrastructure.Data
 
         public virtual DbSet<PharmacyMedicine> PharmacyMedicines{ get; set; }  
 
+        public virtual DbSet<OTP> OTPs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

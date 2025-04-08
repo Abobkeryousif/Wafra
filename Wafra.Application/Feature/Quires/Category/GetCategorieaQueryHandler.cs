@@ -10,11 +10,11 @@ using Wafra.Core.Entites;
 namespace Wafra.Application.Feature.Quires.Category
 {
     public record GetCategorieaCommand : IRequest<HttpResult<List<GetCategory>>>;
-    public class GetCategorieaCommandHandler : IRequestHandler<GetCategorieaCommand, HttpResult<List<GetCategory>>>
+    public class GetCategorieaQueryHandler : IRequestHandler<GetCategorieaCommand, HttpResult<List<GetCategory>>>
     {
         private readonly ICategoryRepository _categoryRepository;
 
-        public GetCategorieaCommandHandler(ICategoryRepository categoryRepository)
+        public GetCategorieaQueryHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }

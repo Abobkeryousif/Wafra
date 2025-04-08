@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Contracts.Services;
 using Wafra.Infrastructure.Data;
@@ -17,7 +20,24 @@ namespace Wafra.Infrastructure.DependencyInjection
             services.AddScoped<IPharamcyRepository , PharmacyRepository>();
             services.AddScoped<IMedicineRepository, MedicinRepository>();
             services.AddScoped<IUserRepository , UserRepository>();
-            services.AddScoped<ISendEmail, SendEmail>();
+            services.AddTransient<ISendEmail, SendEmail>();
+            services.AddTransient<IOtpRepository , OtpRepostiory>();
+
+            //token Method
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
+                AddJwtBearer(j=> j.TokenValidationParameters = new TokenValidationParameters
+                { 
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,    
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["JWT:Issure"],
+                ValidAudience = configuration["JWT:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
+                });
+
+            services.AddScoped<ITokenRepository, TokenRepository>();
+
             return services;
         }
     }

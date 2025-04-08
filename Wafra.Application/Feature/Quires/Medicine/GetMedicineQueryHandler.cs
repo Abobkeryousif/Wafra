@@ -7,11 +7,11 @@ using Wafra.Core.Common;
 namespace Wafra.Application.Feature.Quires.Medicine
 {
     public record GetMedicineCommand() : IRequest<HttpResult<List<GetMedicine>>>;
-    public class GetMedicineCommandHandler : IRequestHandler<GetMedicineCommand, HttpResult<List<GetMedicine>>>
+    public class GetMedicineQueryHandler : IRequestHandler<GetMedicineCommand, HttpResult<List<GetMedicine>>>
     {
         private readonly IMedicineRepository _medicineRepository;
 
-        public GetMedicineCommandHandler(IMedicineRepository medicineRepository)
+        public GetMedicineQueryHandler(IMedicineRepository medicineRepository)
         {
             _medicineRepository = medicineRepository;
         }

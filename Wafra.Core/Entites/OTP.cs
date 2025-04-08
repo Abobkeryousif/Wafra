@@ -12,5 +12,7 @@ namespace Wafra.Core.Entites
         public string Otp { get; set; }
         public string UserEmail { get; set; }
         public bool IsUsed { get; set; } 
+        public DateTime ExpriationOn { get; set; }
+        public bool IsExpired => DateTime.Now > ExpriationOn;
     }
 }

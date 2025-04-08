@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using MimeKit.Cryptography;
 using System.Net;
-using System.Net.Mail;
-using System.Security.Cryptography;
+
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Contracts.Services;
 using Wafra.Application.Feature.DTOs.User;
@@ -16,11 +15,15 @@ namespace Wafra.Application.Feature.Commands.User
     {
         private readonly ISendEmail _sendEmail;
         private readonly IUserRepository _userRepository;
+        private readonly IOtpRepository _otpRepository;
+        private readonly ITokenRepository _tokenRepository;
 
-        public RegisterUserCommandHandler(IUserRepository userRepository, ISendEmail sendEmail)
+        public RegisterUserCommandHandler(IUserRepository userRepository, ISendEmail sendEmail, IOtpRepository otpRepository, ITokenRepository tokenRepository)
         {
             _userRepository = userRepository;
             _sendEmail = sendEmail;
+            _otpRepository = otpRepository;
+            _tokenRepository = tokenRepository;
         }
 
         public async Task<HttpResult<string>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -38,33 +41,24 @@ namespace Wafra.Application.Feature.Commands.User
                 IsValid = request.UserDto.IsValid,
             };
 
-            var newOtp = Generate();
+           Random rendom = new Random();
+            int otp = rendom.Next(0, 999999);
+
             var ConfirmOtps = new OTP
             {
                 Id = new Guid(),
                 IsUsed = false,
-                Otp = newOtp,
-                UserEmail = user.Email
+                Otp = otp.ToString("000000"),
+                UserEmail = user.Email,
+                ExpriationOn = DateTime.UtcNow.AddMinutes(5),
             };
-
-            _sendEmail.SendEmail(user.Email, subject: "Welcome To Wafra", message: $"Plaese Confirm Your Email By Add This Code :\n" +
+            _sendEmail.SendEmail(user.Email, subject: "Welcome To Wafra", message: $"Plaese Confirm Your Email By Add This Code \n\t\t" +
                 $"{ConfirmOtps.Otp}");
             await _userRepository.CreateAsync(user);
-            return new HttpResult<string>(HttpStatusCode.OK, "User Add Sccussfaly!", user.Name);
+            await _otpRepository.CreateAsync(ConfirmOtps);
+            var token = _tokenRepository.CreateToken(user);
+            return new HttpResult<string>(HttpStatusCode.OK, "User Add Sccussfaly!", $"Your Access Token Is: \n\n" +
+                $" {token}");
         }
-
-
-        private string Generate(int lenght = 6)
-        {
-            var random = new Random();
-            string otp = "";
-            for (int i = 0; i < lenght; i++)
-            {
-                otp += random.Next(0, 10);
-            }
-            return otp;
-        }
-}
-
-
+    }
 }

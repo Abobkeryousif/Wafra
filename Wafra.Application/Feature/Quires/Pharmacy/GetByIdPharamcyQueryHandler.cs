@@ -13,11 +13,11 @@ namespace Wafra.Application.Feature.Quires.Pharmacy
 {
     public record GetByIdPharamcyCommand(int Id) : IRequest<HttpResult<GetPharmacy>>;
 
-    public class GetByIdPharamcyCommandHandler : IRequestHandler<GetByIdPharamcyCommand, HttpResult<GetPharmacy>>
+    public class GetByIdPharamcyQueryHandler : IRequestHandler<GetByIdPharamcyCommand, HttpResult<GetPharmacy>>
     {
         private readonly IPharamcyRepository _pharamcyRepository;
 
-        public GetByIdPharamcyCommandHandler(IPharamcyRepository pharamcyRepository)
+        public GetByIdPharamcyQueryHandler(IPharamcyRepository pharamcyRepository)
         {
             _pharamcyRepository = pharamcyRepository;
         }

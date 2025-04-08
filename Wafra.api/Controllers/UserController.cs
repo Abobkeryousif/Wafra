@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Wafra.Application.Feature.Commands.User;
 using Wafra.Application.Feature.DTOs.User;
+using Wafra.Application.Feature.Quires.User;
 
 namespace Wafra.api.Controllers
 {
@@ -16,11 +17,18 @@ namespace Wafra.api.Controllers
             _sender = sender;
         }
 
-        [HttpPost("Create")]
+        [HttpPost("Register")]
 
         public async Task<IActionResult> CreateAsync(UserDto userDto) 
         {
             return Ok(await _sender.Send(new RegisterUserCommand(userDto)));
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> GetAllUser() 
+        {
+            return Ok(await _sender.Send(new GetUserQuery()));
         }
     }
 }

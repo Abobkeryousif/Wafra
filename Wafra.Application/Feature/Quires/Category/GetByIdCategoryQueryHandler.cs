@@ -14,11 +14,11 @@ namespace Wafra.Application.Feature.Quires.Category
 
 
     public record GetByIdCategoryCommand(int Id) : IRequest<HttpResult<CategoryDTO>>;
-    public class GetByIdCategoryCommandHandler : IRequestHandler<GetByIdCategoryCommand, HttpResult<CategoryDTO>>
+    public class GetByIdCategoryQueryHandler : IRequestHandler<GetByIdCategoryCommand, HttpResult<CategoryDTO>>
     {
         private readonly ICategoryRepository _categoryRepository;
 
-        public GetByIdCategoryCommandHandler(ICategoryRepository categoryRepository)
+        public GetByIdCategoryQueryHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
