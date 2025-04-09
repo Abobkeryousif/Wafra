@@ -11,6 +11,8 @@ namespace Wafra.Core.Entites
         public IEnumerable<Order> Orders { get; set; }
 
         public bool IsValid { get; set; } 
-        
+
+        public List<RefreshToken> refreshTokens { get; set; } = new List<RefreshToken>(); 
+
     }
 }

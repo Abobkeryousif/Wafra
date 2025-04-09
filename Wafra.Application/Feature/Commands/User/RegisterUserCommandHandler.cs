@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using MimeKit.Cryptography;
 using System.Net;
-
+using System.Security.Cryptography;
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Contracts.Services;
 using Wafra.Application.Feature.DTOs.User;
@@ -17,6 +17,7 @@ namespace Wafra.Application.Feature.Commands.User
         private readonly IUserRepository _userRepository;
         private readonly IOtpRepository _otpRepository;
         private readonly ITokenRepository _tokenRepository;
+        
 
         public RegisterUserCommandHandler(IUserRepository userRepository, ISendEmail sendEmail, IOtpRepository otpRepository, ITokenRepository tokenRepository)
         {
@@ -41,6 +42,8 @@ namespace Wafra.Application.Feature.Commands.User
                 IsValid = request.UserDto.IsValid,
             };
 
+
+            //otp Generate  
            Random rendom = new Random();
             int otp = rendom.Next(0, 999999);
 
@@ -52,13 +55,18 @@ namespace Wafra.Application.Feature.Commands.User
                 UserEmail = user.Email,
                 ExpriationOn = DateTime.UtcNow.AddMinutes(5),
             };
+
+            
+            
+            //send email to user
             _sendEmail.SendEmail(user.Email, subject: "Welcome To Wafra", message: $"Plaese Confirm Your Email By Add This Code \n\t\t" +
                 $"{ConfirmOtps.Otp}");
             await _userRepository.CreateAsync(user);
             await _otpRepository.CreateAsync(ConfirmOtps);
             var token = _tokenRepository.CreateToken(user);
-            return new HttpResult<string>(HttpStatusCode.OK, "User Add Sccussfaly!", $"Your Access Token Is: \n\n" +
-                $" {token}");
+            return new HttpResult<string>(HttpStatusCode.OK, "User Add Sccussfaly!" , $"Your Access Token" +
+                $"{token.AccessToken}    And Refresh Token" +
+                $"{token.RefreshToken}");
         }
     }
 }

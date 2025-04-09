@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wafra.Infrastructure.Data;
@@ -11,9 +12,11 @@ using Wafra.Infrastructure.Data;
 namespace Wafra.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250408162202_Add_RefreshToken")]
+    partial class Add_RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Medicines", b =>
@@ -63,7 +66,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Medicines", (string)null);
+                    b.ToTable("Medicines");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.OTP", b =>
@@ -90,7 +93,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OTPs", (string)null);
+                    b.ToTable("OTPs");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Order", b =>
@@ -116,7 +119,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.OrderDetails", b =>
@@ -139,7 +142,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Pharmacies", b =>
@@ -166,7 +169,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pharmacies", (string)null);
+                    b.ToTable("Pharmacies");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.PharmacyMedicine", b =>
@@ -192,7 +195,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("PharmacyId");
 
-                    b.ToTable("PharmacyMedicines", (string)null);
+                    b.ToTable("PharmacyMedicines");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.RefreshToken", b =>
@@ -201,27 +204,25 @@ namespace Wafra.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime>("ExpierOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("RevokeOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
-                    b.Property<int?>("UsersId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsersId");
+                    b.HasIndex("Token")
+                        .IsUnique();
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Users", b =>
@@ -255,7 +256,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Medicines", b =>
@@ -328,9 +329,13 @@ namespace Wafra.Infrastructure.Migrations
 
             modelBuilder.Entity("Wafra.Core.Entites.RefreshToken", b =>
                 {
-                    b.HasOne("Wafra.Core.Entites.Users", null)
-                        .WithMany("refreshTokens")
-                        .HasForeignKey("UsersId");
+                    b.HasOne("Wafra.Core.Entites.Users", "Users")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Category", b =>
@@ -358,8 +363,6 @@ namespace Wafra.Infrastructure.Migrations
             modelBuilder.Entity("Wafra.Core.Entites.Users", b =>
                 {
                     b.Navigation("Orders");
-
-                    b.Navigation("refreshTokens");
                 });
 #pragma warning restore 612, 618
         }

@@ -33,7 +33,8 @@ namespace Wafra.Infrastructure.DependencyInjection
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = configuration["JWT:Issure"],
                 ValidAudience = configuration["JWT:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"])),
+                ClockSkew = TimeSpan.Zero
                 });
 
             services.AddScoped<ITokenRepository, TokenRepository>();

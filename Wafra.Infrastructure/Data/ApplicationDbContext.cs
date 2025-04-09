@@ -29,6 +29,8 @@ namespace Wafra.Infrastructure.Data
 
         public virtual DbSet<OTP> OTPs { get; set; }
 
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
