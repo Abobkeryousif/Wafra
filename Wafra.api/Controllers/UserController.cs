@@ -30,5 +30,29 @@ namespace Wafra.api.Controllers
         {
             return Ok(await _sender.Send(new GetUserQuery()));
         }
+
+        [HttpPost("CompleteRegister")]
+
+        public async Task<IActionResult> CompelteRegisterAsync([FromBody] UserOTP userOTP) 
+        {
+            return Ok(await _sender.Send(new CompleteRegisterCommand(userOTP)));
+        }
+        [HttpPost("Login")]
+
+        public async Task<IActionResult> LoginAsync(LoginUserDto loginUserDto) 
+        {
+            return Ok(await _sender.Send(new LoginCommand(loginUserDto)));
+        }
+
     }
 }
+
+
+
+
+
+
+
+
+
+

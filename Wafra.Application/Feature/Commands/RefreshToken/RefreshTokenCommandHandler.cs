@@ -10,13 +10,15 @@ namespace Wafra.Application.Feature.Commands.RefreshToken
     {
         private readonly IUserRepository _userRepository;
         private readonly ITokenRepository _tokenRepository;
-    public RefreshTokenCommandHandler(IUserRepository userRepository, ITokenRepository tokenRepository)
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        public RefreshTokenCommandHandler(IUserRepository userRepository, ITokenRepository tokenRepository, IRefreshTokenRepository refreshTokenRepository)
         {
             _userRepository = userRepository;
             _tokenRepository = tokenRepository;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
-    public async Task<HttpResult<AuthResult>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<HttpResult<AuthResult>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.FirstOrDefaultAsync(u => u.refreshTokens.Any(t => t.Token == request.token));
             if (user == null)
@@ -28,9 +30,10 @@ namespace Wafra.Application.Feature.Commands.RefreshToken
                 return new HttpResult<AuthResult>(HttpStatusCode.BadRequest, "Token Is Not Active");
             }
 
-            refreshToken.RevokeOn = DateTime.UtcNow;
+            refreshToken.RevokeOn = DateTime.Now;
             var newRefreshToken = _tokenRepository.GenerateRefreshToken();
-            user.refreshTokens.Add(newRefreshToken);
+            refreshToken.userId = user.Id;
+            await _refreshTokenRepository.CreateAsync(refreshToken);
             await _userRepository.UpdateAsync(user);
             var token = _tokenRepository.CreateToken(user);
 

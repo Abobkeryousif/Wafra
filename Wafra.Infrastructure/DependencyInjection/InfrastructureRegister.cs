@@ -38,7 +38,7 @@ namespace Wafra.Infrastructure.DependencyInjection
                 });
 
             services.AddScoped<ITokenRepository, TokenRepository>();
-
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             return services;
         }
     }

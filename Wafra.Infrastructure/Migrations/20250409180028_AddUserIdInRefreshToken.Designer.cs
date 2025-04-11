@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wafra.Infrastructure.Data;
@@ -11,9 +12,11 @@ using Wafra.Infrastructure.Data;
 namespace Wafra.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409180028_AddUserIdInRefreshToken")]
+    partial class AddUserIdInRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,12 +217,15 @@ namespace Wafra.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("userId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("UsersId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -330,7 +336,7 @@ namespace Wafra.Infrastructure.Migrations
                 {
                     b.HasOne("Wafra.Core.Entites.Users", "Users")
                         .WithMany("refreshTokens")
-                        .HasForeignKey("userId")
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

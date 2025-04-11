@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Wafra.Application.Feature.Commands.RefreshToken;
 
 namespace Wafra.api.Controllers
 {
@@ -7,8 +9,19 @@ namespace Wafra.api.Controllers
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
+        private readonly ISender _sender;
 
-[HttpPost("Token")]    
+        public AuthenticationController(ISender sender)
+        {
+            _sender = sender;
+        }
+
+        [HttpPost("Token")]
+        public async Task<IActionResult> RefreshToken(string token) 
+        {
+            return Ok(await _sender.Send(new RefreshTokenCommand(token)));
+        }
+
 
 private void SetRefreshTokenInCookie(string refreshToken, DateTime expier) 
 {

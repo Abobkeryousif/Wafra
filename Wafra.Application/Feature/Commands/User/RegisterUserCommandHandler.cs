@@ -39,12 +39,12 @@ namespace Wafra.Application.Feature.Commands.User
                 Email = request.UserDto.Email,
                 Phone = request.UserDto.Phone,
                 Password = hashPassword,
-                IsValid = request.UserDto.IsValid,
+                
             };
 
 
             //otp Generate  
-           Random rendom = new Random();
+            Random rendom = new Random();
             int otp = rendom.Next(0, 999999);
 
             var ConfirmOtps = new OTP
@@ -53,20 +53,18 @@ namespace Wafra.Application.Feature.Commands.User
                 IsUsed = false,
                 Otp = otp.ToString("000000"),
                 UserEmail = user.Email,
-                ExpriationOn = DateTime.UtcNow.AddMinutes(5),
+                ExpriationOn = DateTime.Now.AddMinutes(5),
             };
 
-            
-            
+
+
             //send email to user
             _sendEmail.SendEmail(user.Email, subject: "Welcome To Wafra", message: $"Plaese Confirm Your Email By Add This Code \n\t\t" +
                 $"{ConfirmOtps.Otp}");
             await _userRepository.CreateAsync(user);
             await _otpRepository.CreateAsync(ConfirmOtps);
             var token = _tokenRepository.CreateToken(user);
-            return new HttpResult<string>(HttpStatusCode.OK, "User Add Sccussfaly!" , $"Your Access Token" +
-                $"{token.AccessToken}    And Refresh Token" +
-                $"{token.RefreshToken}");
+            return new HttpResult<string>(HttpStatusCode.OK, "We Send Otp in Email Plaese Confirem It");
         }
     }
 }

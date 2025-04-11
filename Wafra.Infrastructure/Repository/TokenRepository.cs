@@ -13,11 +13,11 @@ using Wafra.Infrastructure.Data;
 
 namespace Wafra.Infrastructure.Repository
 {
-    public class TokenRepository : GenericRepository<RefreshToken> ,ITokenRepository
+    public class TokenRepository : ITokenRepository
     {
         private readonly IConfiguration _configuration;
         
-        public TokenRepository(IConfiguration configuration,ITokenRepository tokenRepository ,ApplicationDbContext context) : base(context)
+        public TokenRepository(IConfiguration configuration) 
         {
             _configuration = configuration;
             
@@ -38,7 +38,7 @@ namespace Wafra.Infrastructure.Repository
                 _configuration["JWT:Audience"],
                 cliams,
                 signingCredentials : Cerdintial,
-                expires: DateTime.UtcNow.AddMinutes(1)
+                expires: DateTime.Now.AddMinutes(1)
                 );
                 return new JwtSecurityTokenHandler().WriteToken(token);
             }
@@ -52,8 +52,8 @@ namespace Wafra.Infrastructure.Repository
             {
                 Id = Guid.NewGuid(),
                 Token = Convert.ToBase64String(random),
-                ExpierOn = DateTime.UtcNow.AddDays(5),
-                CreatedOn = DateTime.UtcNow,
+                ExpierOn = DateTime.Now.AddDays(5),
+                CreatedOn = DateTime.Now,
             };
         }
     }

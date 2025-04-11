@@ -17,6 +17,7 @@ namespace Wafra.Infrastructure.Entity_Configuration
             builder.Property(u => u.Phone).IsRequired();
             builder.Property(n => n.Name).HasMaxLength(255).IsRequired();
             builder.Property(n => n.Email).HasMaxLength(155).IsRequired();
+            builder.HasMany(t=> t.refreshTokens).WithOne(u=> u.Users).HasForeignKey(u=> u.userId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

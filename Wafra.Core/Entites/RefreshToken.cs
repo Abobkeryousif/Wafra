@@ -8,11 +8,13 @@ namespace Wafra.Core.Entites
 
         public DateTime ExpierOn { get; set; }
 
-        public bool IsExiperd => DateTime.UtcNow >= ExpierOn;
+        public bool IsExiperd => DateTime.Now >= ExpierOn;
 
         public DateTime CreatedOn { get; set; }
         public DateTime? RevokeOn { get; set; }
 
         public bool IsActive => RevokeOn == null && !IsExiperd;
+        public int userId { get; set; }
+        public Users Users { get; set; }
     }
 }
