@@ -32,13 +32,13 @@ namespace Wafra.Application.Feature.Commands.User
             var IsExist = await _userRepository.IsExist(u => u.Email == request.UserDto.Email);
             if (IsExist)
                 return new HttpResult<string>(HttpStatusCode.BadRequest, $"This User Already Added! {request.UserDto.Name}");
-            var hashPassword = BCrypt.Net.BCrypt.HashPassword(request.UserDto.Password);
+            
             var user = new Users
             {
                 Name = request.UserDto.Name,
                 Email = request.UserDto.Email,
                 Phone = request.UserDto.Phone,
-                Password = hashPassword,
+                
                 
             };
 

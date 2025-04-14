@@ -33,11 +33,17 @@ public class AuthenticationController : ControllerBase
 
         [HttpPost("ForgetPassword")]
 
-        public async Task<IActionResult> ForgetPasswordAsync(string email) 
+        public async Task<IActionResult> ForgetPasswordAsync(ForgetPassword forget) 
         {
-            return Ok(await _sender.Send(new ForgetPasswordCommand(email)));
+            return Ok(await _sender.Send(new ForgetPasswordCommand(forget)));
         }
 
+        [HttpPost("ResetPassword")]
+
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDTO passwordDTO) 
+        {
+            return Ok(await _sender.Send(new ResetPasswordCommand(passwordDTO)));
+        }
 
 private void SetRefreshTokenInCookie(string refreshToken, DateTime expier) 
 {

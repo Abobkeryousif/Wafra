@@ -1,21 +1,17 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Contracts.Services;
+using Wafra.Application.Feature.DTOs.User;
 using Wafra.Core.Common;
 using Wafra.Core.Common.Enum;
 using Wafra.Core.Entites;
 
 namespace Wafra.Application.Feature.Commands.Authentication
 {
-    public record ForgetPasswordCommand(string email) : IRequest<HttpResult<string>>;
+    public record ForgetPasswordCommand(ForgetPassword Forget) : IRequest<HttpResult<string>>;
     public class ForgetPasswordCommandHandler : IRequestHandler<ForgetPasswordCommand , HttpResult<string>>
     {
         private readonly ISendEmail _sendEmail;
@@ -32,13 +28,13 @@ namespace Wafra.Application.Feature.Commands.Authentication
 
         public async Task<HttpResult<string>> Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.FirstOrDefaultAsync(u => u.Email == request.email);
+            var user = await _userRepository.FirstOrDefaultAsync(u => u.Email == request.Forget.Email);
             if (user == null)
-                return new HttpResult<string>(HttpStatusCode.NotFound,$"Not Found This Email : {request.email}");
+                return new HttpResult<string>(HttpStatusCode.NotFound,$"Not Found This Email : {request.Forget.Email}");
 
             var verifiaction = new Verification
             {
-                Email = request.email,
+                Email = request.Forget.Email,
                 Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64)),
                 TokenPerpoues = TokenPerpoues.RestPassword,
                 ExpierOn = DateTime.Now.AddMinutes(30)

@@ -9,6 +9,8 @@ namespace Wafra.Core.Entites
         public string Token { get; set; }
         public string Email { get; set; }
         public DateTime ExpierOn { get; set; }
+
+        public bool IsUsed { get; set; }
         public bool IsExpier => DateTime.Now > ExpierOn;
         public TokenPerpoues TokenPerpoues { get; set; }
     }
