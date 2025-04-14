@@ -8,11 +8,11 @@ using Wafra.Core.Common;
 namespace Wafra.Application.Feature.Quires.User
 {
     public record GetUserQuery : IRequest<HttpResult<List<GetUser>>>;
-    public class GetUserQueryHandler : IRequestHandler<GetUserQuery, HttpResult<List<GetUser>>>
+    public class GetUserCommandHandler : IRequestHandler<GetUserQuery, HttpResult<List<GetUser>>>
     {
         private readonly IUserRepository _userRepository;
 
-        public GetUserQueryHandler(IUserRepository userRepository)
+        public GetUserCommandHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }

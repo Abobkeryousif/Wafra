@@ -37,13 +37,28 @@ namespace Wafra.api.Controllers
         {
             return Ok(await _sender.Send(new CompleteRegisterCommand(userOTP)));
         }
-        [HttpPost("Login")]
+        
 
-        public async Task<IActionResult> LoginAsync(LoginUserDto loginUserDto) 
+        [HttpGet("GetById")]
+
+        public async Task<IActionResult> GetByIdAsync(int Id) 
         {
-            return Ok(await _sender.Send(new LoginCommand(loginUserDto)));
+            return Ok(await _sender.Send(new GetByIdUserCommand(Id)));
         }
 
+        [HttpDelete("Delete")]
+
+        public async Task<IActionResult> DeleteAsync(int Id) 
+        {
+            return Ok(await _sender.Send(new DeleteUserCommand(Id)));
+        }
+
+        [HttpPut("Update")]
+        
+        public async Task<IActionResult> UpdateAsync(int Id,UserDto userDto) 
+        {
+            return Ok(await _sender.Send(new UpdateUserCommand(Id,userDto)));
+        }
     }
 }
 

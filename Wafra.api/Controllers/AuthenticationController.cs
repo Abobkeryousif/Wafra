@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Wafra.Application.Feature.Commands.Authentication;
 using Wafra.Application.Feature.Commands.RefreshToken;
+using Wafra.Application.Feature.DTOs.User;
 
 namespace Wafra.api.Controllers
 {
@@ -22,6 +24,20 @@ public class AuthenticationController : ControllerBase
             return Ok(await _sender.Send(new RefreshTokenCommand(token)));
         }
 
+        [HttpPost("login")]
+
+        public async Task<IActionResult> LoginAsync(LoginUserDto login) 
+        {
+            return Ok(await _sender.Send(new LoginCommand(login)));
+        }
+
+        [HttpPost("ForgetPassword")]
+
+        public async Task<IActionResult> ForgetPasswordAsync(string email) 
+        {
+            return Ok(await _sender.Send(new ForgetPasswordCommand(email)));
+        }
+
 
 private void SetRefreshTokenInCookie(string refreshToken, DateTime expier) 
 {
@@ -35,3 +51,6 @@ private void SetRefreshTokenInCookie(string refreshToken, DateTime expier)
     }
     }
 }
+
+
+

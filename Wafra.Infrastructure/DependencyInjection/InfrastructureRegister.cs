@@ -22,7 +22,7 @@ namespace Wafra.Infrastructure.DependencyInjection
             services.AddScoped<IUserRepository , UserRepository>();
             services.AddTransient<ISendEmail, SendEmail>();
             services.AddTransient<IOtpRepository , OtpRepostiory>();
-
+            services.AddScoped<IVerificationRepository, VerificationRepository>();
             //token Method
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
                 AddJwtBearer(j=> j.TokenValidationParameters = new TokenValidationParameters

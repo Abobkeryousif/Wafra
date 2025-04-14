@@ -17,7 +17,7 @@ namespace Wafra.Application.Feature.Commands.User
         private readonly IUserRepository _userRepository;
         private readonly IOtpRepository _otpRepository;
         private readonly ITokenRepository _tokenRepository;
-        
+    
 
         public RegisterUserCommandHandler(IUserRepository userRepository, ISendEmail sendEmail, IOtpRepository otpRepository, ITokenRepository tokenRepository)
         {
@@ -29,7 +29,7 @@ namespace Wafra.Application.Feature.Commands.User
 
         public async Task<HttpResult<string>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var IsExist = await _userRepository.IsExist(u => u.Name == request.UserDto.Name);
+            var IsExist = await _userRepository.IsExist(u => u.Email == request.UserDto.Email);
             if (IsExist)
                 return new HttpResult<string>(HttpStatusCode.BadRequest, $"This User Already Added! {request.UserDto.Name}");
             var hashPassword = BCrypt.Net.BCrypt.HashPassword(request.UserDto.Password);

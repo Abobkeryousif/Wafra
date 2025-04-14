@@ -16,12 +16,12 @@ namespace Wafra.Application.Feature.Quires.Pharmacy
 
     public class GetAllPharmacyCommand() : IRequest<HttpResult<List<GetPharmacy>>>;
 
-    public class GetPharmacyQueryHandler : IRequestHandler<GetAllPharmacyCommand, HttpResult<List<GetPharmacy>>>
+    public class GetPharmacyCommandHandler : IRequestHandler<GetAllPharmacyCommand, HttpResult<List<GetPharmacy>>>
     {
         
         private readonly IPharamcyRepository _pharamcyRepository;
 
-        public GetPharmacyQueryHandler(IPharamcyRepository pharamcyRepository)
+        public GetPharmacyCommandHandler(IPharamcyRepository pharamcyRepository)
         {
             _pharamcyRepository = pharamcyRepository;
         }

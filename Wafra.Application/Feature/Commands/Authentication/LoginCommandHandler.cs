@@ -10,7 +10,7 @@ using Wafra.Application.Feature.DTOs.User;
 using Wafra.Core.Common;
 using Wafra.Core.Entites;
 
-namespace Wafra.Application.Feature.Commands.User
+namespace Wafra.Application.Feature.Commands.Authentication
 {
     public record LoginCommand(LoginUserDto users) : IRequest<HttpResult<AuthResult>>;
     public class LoginCommandHandler : IRequestHandler<LoginCommand, HttpResult<AuthResult>>
