@@ -39,7 +39,8 @@ namespace Wafra.Application.Feature.Commands.Authentication
 
             if (verification.IsUsed)
                 return new HttpResult<GetUserDto>(HttpStatusCode.BadRequest, "Token Already Used");
-
+            
+            //hash Password And Add To User
             string newPassword = BCrypt.Net.BCrypt.HashPassword(request.PasswordDTO.password);
             user.Password = newPassword;
 

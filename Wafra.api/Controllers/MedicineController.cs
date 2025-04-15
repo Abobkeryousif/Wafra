@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Wafra.Application.Feature.Commands.Medicin;
 using Wafra.Application.Feature.Commands.Medicine;
 using Wafra.Application.Feature.DTOs.Medicin;
+using Wafra.Application.Feature.DTOs.Medicine;
 using Wafra.Application.Feature.Quires.Medicine;
 
 namespace Wafra.api.Controllers
@@ -36,6 +37,13 @@ namespace Wafra.api.Controllers
         public async Task<IActionResult> GetByIdAsync(int Id)
         {
             return Ok(await _sender.Send(new GetByIdMedicineCommand(Id)));
+        }
+
+        [HttpGet("GetByName")]
+
+        public async Task<IActionResult> GetByNameAsync(GetByNameMedicineDto medicineDto)
+        {
+            return Ok(await _sender.Send(new GetMedicineByNameCommand(medicineDto)));
         }
 
         [HttpPut("Update")]

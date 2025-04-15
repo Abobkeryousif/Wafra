@@ -2,7 +2,7 @@
 
 namespace Wafra.Application.Feature.DTOs.Medicin
 {
-    public class GetMedicine
+    public class GetMedicineDto
     {
         public int Id { get; set; }
 
