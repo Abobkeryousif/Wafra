@@ -32,39 +32,42 @@ namespace Wafra.Application.Feature.Commands.User
             var IsExist = await _userRepository.IsExist(u => u.Email == request.UserDto.Email);
             if (IsExist)
                 return new HttpResult<string>(HttpStatusCode.BadRequest, $"This User Already Added! {request.UserDto.Name}");
-            
+
+            var hashedPassword =  BCrypt.Net.BCrypt.HashPassword(request.UserDto.Password);
+
             var user = new Users
             {
                 Name = request.UserDto.Name,
                 Email = request.UserDto.Email,
                 Phone = request.UserDto.Phone,
-                
-                
+                Password = hashedPassword,
+                IsValid = true
+
             };
 
 
             //otp Generate  
-            Random rendom = new Random();
-            int otp = rendom.Next(0, 999999);
+            //Random rendom = new Random();
+            //int otp = rendom.Next(0, 999999);
 
-            var ConfirmOtps = new OTP
-            {
-                Id = new Guid(),
-                IsUsed = false,
-                Otp = otp.ToString("000000"),
-                UserEmail = user.Email,
-                ExpriationOn = DateTime.Now.AddMinutes(5),
-            };
+            //var ConfirmOtps = new OTP
+            //{
+            //    Id = new Guid(),
+            //    IsUsed = false,
+            //    Otp = otp.ToString("000000"),
+            //    UserEmail = user.Email,
+            //    ExpriationOn = DateTime.Now.AddMinutes(5),
+            //};
 
 
 
             //send email to user
-            _sendEmail.SendEmail(user.Email, subject: "Welcome To Wafra", message: $"Plaese Confirm Your Email By Add This Code \n\t\t" +
-                $"{ConfirmOtps.Otp}");
+            //_sendEmail.SendEmail(user.Email, subject: "Welcome To Wafra", message: $"Plaese Confirm Your Email By Add This Code \n\t\t" +
+            //    $"{ConfirmOtps.Otp}");
             await _userRepository.CreateAsync(user);
-            await _otpRepository.CreateAsync(ConfirmOtps);
+            //await _otpRepository.CreateAsync(ConfirmOtps);
             var token = _tokenRepository.CreateToken(user);
-            return new HttpResult<string>(HttpStatusCode.OK, "We Send Otp in Email Plaese Confirem It");
+            return new HttpResult<string>(HttpStatusCode.OK, "User Registerd Successfly !");
         }
     }
 }

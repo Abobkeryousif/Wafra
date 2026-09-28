@@ -1,6 +1,7 @@
-using System.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Wafra.Application.DependencyInjection;
 using Wafra.Core.Common;
+using Wafra.Infrastructure.Data;
 using Wafra.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddSwaggerGen();
 builder.Services.InfrastructureConfig(builder.Configuration);
 builder.Services.ApplicationConfig();
