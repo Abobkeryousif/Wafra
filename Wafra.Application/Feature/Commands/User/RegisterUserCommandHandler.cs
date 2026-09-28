@@ -1,7 +1,5 @@
 ﻿using MediatR;
-using MimeKit.Cryptography;
 using System.Net;
-using System.Security.Cryptography;
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Contracts.Services;
 using Wafra.Application.Feature.DTOs.User;
