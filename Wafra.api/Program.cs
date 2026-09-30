@@ -7,14 +7,14 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Npgsql;
 using OpenTelemetry.Metrics;
-
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 var resource = ResourceBuilder.CreateDefault();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
@@ -23,7 +23,19 @@ builder.Services.InfrastructureConfig(builder.Configuration);
 builder.Services.ApplicationConfig();
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));
 
+//serilog config
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console(
+    theme: AnsiConsoleTheme.Code, 
+    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
+    .CreateLogger();
 
+builder.Host.UseSerilog();
+
+
+//opentelemetry config
 builder.Services.AddOpenTelemetry()
     .WithTracing(traceProvider=>
     {
@@ -31,16 +43,16 @@ builder.Services.AddOpenTelemetry()
                 .SetResourceBuilder(resource)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddNpgsql()
-                .AddConsoleExporter();
+                .AddNpgsql();
+                //.AddConsoleExporter();
     }).WithMetrics(meterProvider=>
     {
         meterProvider
             .SetResourceBuilder(resource)
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddNpgsqlInstrumentation()
-            .AddConsoleExporter();
+            .AddNpgsqlInstrumentation();
+            //.AddConsoleExporter();
     });
 
 

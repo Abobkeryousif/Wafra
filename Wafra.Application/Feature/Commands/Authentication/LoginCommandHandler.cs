@@ -1,14 +1,9 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Feature.DTOs.User;
 using Wafra.Core.Common;
-using Wafra.Core.Entites;
 
 namespace Wafra.Application.Feature.Commands.Authentication
 {
@@ -16,24 +11,33 @@ namespace Wafra.Application.Feature.Commands.Authentication
     public class LoginCommandHandler : IRequestHandler<LoginCommand, HttpResult<AuthResult>>
     {
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<LoginCommandHandler> _logger;
         private readonly ITokenRepository _tokenRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
-        public LoginCommandHandler(IUserRepository userRepository, ITokenRepository tokenRepository, IRefreshTokenRepository refreshTokenRepository)
+        public LoginCommandHandler(IUserRepository userRepository, ITokenRepository tokenRepository,
+            IRefreshTokenRepository refreshTokenRepository, ILogger<LoginCommandHandler> logger)
         {
             _userRepository = userRepository;
             _tokenRepository = tokenRepository;
             _refreshTokenRepository = refreshTokenRepository;
+            _logger = logger;
         }
 
         public async Task<HttpResult<AuthResult>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var loginUser = await _userRepository.FirstOrDefaultAsync(u => u.Email == request.users.Email);
             if (loginUser == null)
+            {
+                _logger.LogWarning("Invalid email or password");
                 return new HttpResult<AuthResult>(HttpStatusCode.NotFound, "Email or Password Is Invalid");
+            }
 
             var pass = BCrypt.Net.BCrypt.Verify( request.users.Password,loginUser.Password);
             if (!pass)
-                return new HttpResult<AuthResult>(HttpStatusCode.NotFound,"Email or Password Is Invalid");
+            {
+                _logger.LogWarning("Invalid email or password");
+                return new HttpResult<AuthResult>(HttpStatusCode.NotFound, "Email or Password Is Invalid");
+            }
 
             if (loginUser.IsValid == false)
                 return new HttpResult<AuthResult>(HttpStatusCode.BadRequest, "Plaese Compelet Rigster To Login");
@@ -55,6 +59,8 @@ namespace Wafra.Application.Feature.Commands.Authentication
             var refreshToken = _tokenRepository.GenerateRefreshToken();
             refreshToken.userId = loginUser.Id;
             await _refreshTokenRepository.CreateAsync(refreshToken);
+
+            _logger.LogInformation("Successfly {Username} login to system", loginUser.Name);
 
             return new HttpResult<AuthResult>(HttpStatusCode.OK,"Complete Login Opration" , new AuthResult 
             { 
