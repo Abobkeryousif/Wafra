@@ -10,7 +10,7 @@ using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
-var resource = ResourceBuilder.CreateDefault();
+var resource = ResourceBuilder.CreateDefault().AddService("Wafra");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,15 +43,20 @@ builder.Services.AddOpenTelemetry()
                 .SetResourceBuilder(resource)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddNpgsql();
-                //.AddConsoleExporter();
+                .AddNpgsql()
+                //.AddConsoleExporter()
+                .AddOtlpExporter(options =>
+                {
+                    options.Endpoint = new Uri("http://otel-collector-app:4317");
+                });
     }).WithMetrics(meterProvider=>
     {
         meterProvider
             .SetResourceBuilder(resource)
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddNpgsqlInstrumentation();
+            .AddNpgsqlInstrumentation()
+            .AddOtlpExporter();
             //.AddConsoleExporter();
     });
 
@@ -59,12 +64,9 @@ builder.Services.AddOpenTelemetry()
 var app = builder.Build();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
