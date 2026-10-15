@@ -37,7 +37,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Medicines", b =>
@@ -63,7 +63,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicines", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.OTP", b =>
@@ -90,7 +90,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OTPs");
+                    b.ToTable("OTPs", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Order", b =>
@@ -116,7 +116,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.OrderDetails", b =>
@@ -139,7 +139,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Pharmacies", b =>
@@ -166,7 +166,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pharmacies");
+                    b.ToTable("Pharmacies", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.PharmacyMedicine", b =>
@@ -192,7 +192,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("PharmacyId");
 
-                    b.ToTable("PharmacyMedicines");
+                    b.ToTable("PharmacyMedicines", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.RefreshToken", b =>
@@ -221,7 +221,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Users", b =>
@@ -255,7 +255,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Verification", b =>
@@ -285,7 +285,7 @@ namespace Wafra.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Verifications");
+                    b.ToTable("Verifications", (string)null);
                 });
 
             modelBuilder.Entity("Wafra.Core.Entites.Medicines", b =>

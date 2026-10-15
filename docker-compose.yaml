@@ -1,4 +1,25 @@
+
 services:
+
+  wafra-db:
+    image: postgres
+    container_name: wafra-postgresql-database
+
+    environment:
+      POSTGRES_DB: wafra-database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    volumes:
+    - wafra-postgres-data:/var/lib/postgresql
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wafra-database"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
   wafra-app:
     build:
       context: .
@@ -7,11 +28,17 @@ services:
       - "8083:8080"
 
     environment:
+      ConnectionStrings__Default: "Host=wafra-db;Port=5432;Database=wafra-database;Username=postgres;Password=postgres"
+    
       JWT__Key: ${JWT_KEY}
       JWT__Issuer: ${JWT_ISSUER}
       JWT__Audience: ${JWT_AUDIENCE}
+
     depends_on:
-      - otel-collector-app
+        wafra-db:
+          condition: service_healthy
+
+        
   
   otel-collector-app:
     image: otel/opentelemetry-collector-contrib
@@ -23,6 +50,7 @@ services:
     ports:
       - "4317:4317"
       - "4318:4318"
+      - "9464:9464"
 
     command:
       - "--config=/etc/otelcol-contrib/config.yaml"
@@ -39,3 +67,21 @@ services:
       - 16686:16686 # jaeger UI
       - 14268:14268  # collector (otlp http / thrifty )
       - 14250:14250 # grpc
+
+
+  prometheus:
+    image: prom/prometheus
+    container_name: wafra-prometheus-metrics
+    ports:
+      - 9092:9090
+
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - otel-collector-app
+    
+
+
+
+volumes:
+  wafra-postgres-data:

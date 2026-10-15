@@ -1,23 +1,36 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using Wafra.Application.DependencyInjection;
 using Wafra.Core.Common;
 using Wafra.Infrastructure.Data;
 using Wafra.Infrastructure.DependencyInjection;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using Npgsql;
-using OpenTelemetry.Metrics;
-using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 
 var resource = ResourceBuilder.CreateDefault().AddService("Wafra");
+const string otel_endpoint_uri = "http://otel-collector-app:4317";
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services.AddDbContext<ApplicationDbContext>(
+    option => option
+        .UseNpgsql(
+            builder.Configuration.GetConnectionString("Default"))
+        .ConfigureWarnings(warnings =>
+            warnings.Ignore(
+                RelationalEventId.PendingModelChangesWarning)));   // temporary to avoid Pending model issue, now just fouce with otel, otel col and diffrenet ovserbaility backend
+
 builder.Services.AddSwaggerGen();
 builder.Services.InfrastructureConfig(builder.Configuration);
 builder.Services.ApplicationConfig();
@@ -28,14 +41,21 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console(
     theme: AnsiConsoleTheme.Code, 
-    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
-    )
+    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.OpenTelemetry(options=>
+    {
+        options.Endpoint = otel_endpoint_uri;
+        options.ResourceAttributes = new Dictionary<string, object>
+        {
+            ["service.name"] = "Wafra"
+        };
+    })
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
 
-//opentelemetry config
+//opentelemetry and auto instermentation configs
 builder.Services.AddOpenTelemetry()
     .WithTracing(traceProvider=>
     {
@@ -47,22 +67,34 @@ builder.Services.AddOpenTelemetry()
                 //.AddConsoleExporter()
                 .AddOtlpExporter(options =>
                 {
-                    options.Endpoint = new Uri("http://otel-collector-app:4317");
+                    options.Endpoint = new Uri(otel_endpoint_uri);
                 });
-    }).WithMetrics(meterProvider=>
+    })
+    .WithMetrics(meterProvider =>
     {
         meterProvider
             .SetResourceBuilder(resource)
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddNpgsqlInstrumentation()
-            .AddOtlpExporter();
-            //.AddConsoleExporter();
+            .AddRuntimeInstrumentation()
+            .AddOtlpExporter((exporterOptions, readerOptions) =>
+            {
+                exporterOptions.Endpoint =
+                    new Uri(otel_endpoint_uri);
+
+                readerOptions
+                    .PeriodicExportingMetricReaderOptions
+                    .ExportIntervalMilliseconds = 20_000;
+            });
     });
+
 
 
 var app = builder.Build();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+await app.Services.ApplyMigrationAsync<ApplicationDbContext>();
 
 app.MapOpenApi();
 app.UseSwagger();

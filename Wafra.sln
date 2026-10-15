@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "observability", "observabil
 		docker-compose.yaml = docker-compose.yaml
 		dockerfile = dockerfile
 		otel-collector-config.yml = otel-collector-config.yml
+		prometheus.yaml = prometheus.yaml
 	EndProjectSection
 EndProject
 Global
