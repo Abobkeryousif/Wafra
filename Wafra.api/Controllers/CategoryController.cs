@@ -29,7 +29,7 @@ namespace Wafra.api.Controllers
 
         public async Task<IActionResult> GetAllAsync() 
         {
-            var result = await _sender.Send(new GetCategorieaCommand());
+            var result = await _sender.Send(new GetCategoriesCommand());
             return Ok(result);
         }
         [HttpGet("GetById")]

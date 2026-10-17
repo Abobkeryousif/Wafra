@@ -1,19 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Npgsql;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using Wafra.Application.CustomMetrics;
+using Wafra.Application.CustomTraces;
 using Wafra.Application.DependencyInjection;
 using Wafra.Core.Common;
 using Wafra.Infrastructure.Data;
 using Wafra.Infrastructure.DependencyInjection;
 
-var resource = ResourceBuilder.CreateDefault().AddService("Wafra");
+
 const string otel_endpoint_uri = "http://otel-collector-app:4317";
 
 
@@ -55,12 +56,14 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 
-//opentelemetry and auto instermentation configs
+//opentelemetry settings and auto instermentation configs
 builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resourceBuilder => resourceBuilder.AddService("Wafra", "1.3"))
     .WithTracing(traceProvider=>
     {
         traceProvider
-                .SetResourceBuilder(resource)
+                .AddSource(CategoryActivitySource.SourceName)
+                .AddSource(MedicineActivitySource.SourceName)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddNpgsql()
@@ -73,7 +76,8 @@ builder.Services.AddOpenTelemetry()
     .WithMetrics(meterProvider =>
     {
         meterProvider
-            .SetResourceBuilder(resource)
+            .AddMeter(CategoryMetrics.meterName)
+            .AddMeter(MedicineMetrics.meterName)
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddNpgsqlInstrumentation()
