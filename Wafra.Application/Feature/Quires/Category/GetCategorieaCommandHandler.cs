@@ -3,9 +3,10 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net;
 using Wafra.Application.Contracts.Interfaces;
-using Wafra.Application.CustomMetrics;
-using Wafra.Application.CustomTraces;
 using Wafra.Application.Feature.DTOs.Category;
+using Wafra.Application.Observability.CustomMetrics;
+using Wafra.Application.Observability.CustomTraces;
+using Wafra.Application.Observability.Helper;
 using Wafra.Core.Common;
 
 
@@ -26,6 +27,16 @@ namespace Wafra.Application.Feature.Quires.Category
 
         public async Task<HttpResult<List<GetCategory>>> Handle(GetCategoriesCommand request, CancellationToken cancellationToken)
         {
+            // var tags = new TagList
+            // {
+            //     {"module", "category" },
+            //     {"operation", "get_all" },
+            //     {"status", "success" }
+            //};
+
+            const string module = "category";
+            const string operation = "get_all";
+
             using var activity = CategoryActivitySource.Source.StartActivity("categoriea.get_all");
             Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -36,7 +47,9 @@ namespace Wafra.Application.Feature.Quires.Category
             {
                 _logger.LogWarning("not found category in db");
 
-                activity?.SetTag("wafra.category.outcome", "not_found"); //outcome powerful because help us in traces filtering 
+                BusinessMetricsHelper.RecordOperation(module, operation, "failure");
+
+                activity?.SetTag("wafra.category.outcome", "failure"); //outcome powerful because help us in traces filtering 
                 
 
                 return new HttpResult<List<GetCategory>>(HttpStatusCode.NotFound, "Category Not Found");
@@ -52,9 +65,8 @@ namespace Wafra.Application.Feature.Quires.Category
 
             stopwatch.Stop();
 
-            CategoryMetrics.GetAllCategoreis.Add(1);
-            CategoryMetrics.GetAllCategoryDuration.Record(stopwatch.ElapsedMilliseconds);
-
+            BusinessMetricsHelper.RecordOperation(module, operation, "success");
+            BusinessMetricsHelper.RecordDuration(module, operation, stopwatch.ElapsedMilliseconds);
 
             return new HttpResult<List<GetCategory>>(HttpStatusCode.OK, "All Category Has Returned",categories);
         }

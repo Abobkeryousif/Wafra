@@ -7,9 +7,10 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
-using Wafra.Application.CustomMetrics;
-using Wafra.Application.CustomTraces;
+using Wafra.Application.Custom_Observability_Signals.CustomTraces;
 using Wafra.Application.DependencyInjection;
+using Wafra.Application.Observability.CustomMetrics;
+using Wafra.Application.Observability.CustomTraces;
 using Wafra.Core.Common;
 using Wafra.Infrastructure.Data;
 using Wafra.Infrastructure.DependencyInjection;
@@ -62,8 +63,10 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(traceProvider=>
     {
         traceProvider
-                .AddSource(CategoryActivitySource.SourceName)
+                .AddSource(UserActivitySource.SourceName)
                 .AddSource(MedicineActivitySource.SourceName)
+                .AddSource(PharmacyActivitySource.SourceName)
+                .AddSource(CategoryActivitySource.SourceName)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddNpgsql()
@@ -76,8 +79,7 @@ builder.Services.AddOpenTelemetry()
     .WithMetrics(meterProvider =>
     {
         meterProvider
-            .AddMeter(CategoryMetrics.meterName)
-            .AddMeter(MedicineMetrics.meterName)
+            .AddMeter(WafraBusinessMetrics.meterName)
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddNpgsqlInstrumentation()

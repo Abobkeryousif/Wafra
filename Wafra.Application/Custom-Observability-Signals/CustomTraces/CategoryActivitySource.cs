@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Wafra.Application.CustomTraces
+namespace Wafra.Application.Observability.CustomTraces
 {
     public static class CategoryActivitySource
     {

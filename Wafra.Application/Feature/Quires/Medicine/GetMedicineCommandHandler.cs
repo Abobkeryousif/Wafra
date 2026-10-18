@@ -3,9 +3,10 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net;
 using Wafra.Application.Contracts.Interfaces;
-using Wafra.Application.CustomMetrics;
-using Wafra.Application.CustomTraces;
 using Wafra.Application.Feature.DTOs.Medicin;
+using Wafra.Application.Observability.CustomMetrics;
+using Wafra.Application.Observability.CustomTraces;
+using Wafra.Application.Observability.Helper;
 using Wafra.Core.Common;
 
 namespace Wafra.Application.Feature.Quires.Medicine
@@ -24,6 +25,10 @@ namespace Wafra.Application.Feature.Quires.Medicine
 
         public async Task<HttpResult<List<GetMedicineDto>>> Handle(GetMedicineCommand request, CancellationToken cancellationToken)
         {
+            const string module = "medicine";
+            const string operation = "get_all";
+            
+
             using var activity = MedicineActivitySource.Source.StartActivity("medicine.get_all");
             var stopWatch = Stopwatch.StartNew();
 
@@ -33,7 +38,9 @@ namespace Wafra.Application.Feature.Quires.Medicine
             if (result.Count == 0)
             {
                 _logger.LogWarning("No medicine found in DB.");
-                activity?.SetTag("wafra.medicine.outcome", "not_found");
+                activity?.SetTag("wafra.medicine.outcome", "failure");
+
+                BusinessMetricsHelper.RecordOperation(module, operation, "failure");
 
                 return new HttpResult<List<GetMedicineDto>>(HttpStatusCode.NotFound, "Medicine Not Found");
             }
@@ -43,13 +50,12 @@ namespace Wafra.Application.Feature.Quires.Medicine
             _logger.LogInformation("Successfly retrived {MedicineCount} medicines.", result.Count);
             activity?.SetTag("wafra.medicine.outcome", "success");
             activity?.SetTag("wafra.medicine.result_count", medicine.Count);
-            activity?.SetStatus(ActivityStatusCode.Ok);
             
 
             stopWatch.Stop();
 
-            MedicineMetrics.GetAllMedicine.Add(1);
-            MedicineMetrics.GetAllMedicineDuration.Record(stopWatch.ElapsedMilliseconds);
+            BusinessMetricsHelper.RecordOperation(module, operation, "success");
+            BusinessMetricsHelper.RecordDuration(module, operation, stopWatch.ElapsedMilliseconds);
 
             return new HttpResult<List<GetMedicineDto>>(HttpStatusCode.OK,"All Medicine Returned",medicine);
 
