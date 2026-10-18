@@ -63,10 +63,6 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(traceProvider=>
     {
         traceProvider
-                .AddSource(UserActivitySource.SourceName)
-                .AddSource(MedicineActivitySource.SourceName)
-                .AddSource(PharmacyActivitySource.SourceName)
-                .AddSource(CategoryActivitySource.SourceName)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddNpgsql()
