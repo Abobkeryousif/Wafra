@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Net;
 using Wafra.Application.Contracts.Interfaces;
 using Wafra.Application.Feature.DTOs.Category;
-using Wafra.Application.Observability.CustomMetrics;
 using Wafra.Application.Observability.CustomTraces;
 using Wafra.Application.Observability.Helper;
 using Wafra.Core.Common;

@@ -16,9 +16,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "observability", "observabil
 		.env = .env
 		docker-compose.yaml = docker-compose.yaml
 		dockerfile = dockerfile
+		loki-config.yaml = loki-config.yaml
 		otel-collector-config.yml = otel-collector-config.yml
 		prometheus.yaml = prometheus.yaml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jaeger-data", "jaeger-data", "{7BE5215B-C527-479D-9C42-CE4084489A42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +48,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7BE5215B-C527-479D-9C42-CE4084489A42} = {9BCB5868-57E6-45D3-90BF-FF7A5A63B113}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B1BE63D-F437-4583-AB8B-E244EF2704E3}

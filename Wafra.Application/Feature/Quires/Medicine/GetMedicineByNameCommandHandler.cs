@@ -3,14 +3,13 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net;
 using Wafra.Application.Contracts.Interfaces;
-using Wafra.Application.Feature.DTOs.Medicine;
 using Wafra.Application.Observability.CustomTraces;
 using Wafra.Application.Observability.Helper;
 using Wafra.Core.Common;
 
 namespace Wafra.Application.Feature.Quires.Medicine
 {
-    public record GetMedicineByNameCommand(GetByNameMedicineDto MedicineDto) : IRequest<HttpResult<string>> ;
+    public record GetMedicineByNameCommand(string medicineName) : IRequest<HttpResult<string>> ;
     public class GetMedicineByNameCommandHandler : IRequestHandler<GetMedicineByNameCommand, HttpResult<string>>
     {
         private readonly IMedicineRepository _medicineRepository;
@@ -30,7 +29,7 @@ namespace Wafra.Application.Feature.Quires.Medicine
             using var activity = MedicineActivitySource.Source.StartActivity("medicine.get_by_name");
             var stopwatch = Stopwatch.StartNew();
 
-            if (string.IsNullOrWhiteSpace(request.MedicineDto.MedicineName))
+            if (string.IsNullOrWhiteSpace(request.medicineName))
             {
                 _logger.LogWarning("user does't enter any value");
                 activity?.SetTag("wafra.medicine.outcome", "invalid");
@@ -39,10 +38,10 @@ namespace Wafra.Application.Feature.Quires.Medicine
                 return new HttpResult<string>(HttpStatusCode.BadRequest, "Please Enter Medicine Name");
             }
 
-            var medicine = await _medicineRepository.FirstOrDefaultAsync(m=> m.Name.ToLower() == request.MedicineDto.MedicineName.ToLower());
+            var medicine = await _medicineRepository.FirstOrDefaultAsync(m=> m.Name.ToLower() == request.medicineName.ToLower());
             if (medicine == null)
             {
-                _logger.LogWarning("medicine not found with name: {MedicineName}", request.MedicineDto.MedicineName);
+                _logger.LogWarning("medicine not found with name: {MedicineName}", request.medicineName);
                 activity?.SetTag("wafra.medicine.outcome", "failure");
                 BusinessMetricsHelper.RecordOperation(module, operation, "failure");
 

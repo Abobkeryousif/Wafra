@@ -13,7 +13,7 @@ processors:
     send_batch_size: 512 
 
   memory_limiter:
-    check_interval: 10s
+    check_interval: 2s
     limit_mib: 256
     spike_limit_mib: 64  
 
@@ -24,14 +24,27 @@ processors:
         match_type: regexp
         metric_names:
           - "^kestrel.*"
-          - "^dns.*"
+          # - "^dns.*"
+
+
+  filter/logs:
+      error_mode: ignore
+      log_conditions:
+        - 'IsMatch(log.body, "./*/swagger/.*")'
+ 
+  filter/traces:
+    error_mode: ignore
+    trace_conditions:
+      - 'IsMatch(span.attributes["uri.path"], "^/swagger(/|$)")'
 
   transform/traces:
     error_mode: ignore
     trace_statements:
       - context: span
         statements: 
-          - 'set(status.code, STATUS_CODE_OK) where status.code == STATUS_CODE_UNSET'
+          - 'set(attributes["environment.name"], "development")'
+          - 'delete_key(span.attributes, "db.npgsql.data_source")' # to remove connection string before send it to jaeger
+          - 'delete_key(span.attributes, "db.npgsql.connection_id")'
         
 exporters:
   otlp/jaeger:
@@ -39,28 +52,52 @@ exporters:
     tls:
       insecure: true
 
+    # follow reclinces to save our telemetry data if observability backend is not avilable for any resons and retry to send data many times 
+    sending_queue:
+      enabled: true
+      queue_size: 1000
+
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s  # wait 5s before retry again
+      max_interval: 25s  # waiting between retries should't take more than 25s
+      max_elapsed_time: 120s  # after 120s stop retry process,  this maybe error in backend
+
+
+     
   prometheus:
     endpoint: "0.0.0.0:9464" #deply metrics from collector to specific path and make prometheus scrape Metric from this target
+
+
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
 
   debug:
     verbosity: detailed
     
 
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  zpages:
+    endpoint: 0.0.0.0:55679
 
 service:
+  extensions: [health_check, zpages]
   pipelines:
   
     traces:
       receivers: [otlp]
-      processors: [memory_limiter ,transform/traces, batch]
-      exporters: [debug, otlp/jaeger]
+      processors: [memory_limiter, filter/traces, transform/traces, batch]
+      exporters: [otlp/jaeger]
 
     metrics:
       receivers: [otlp]
-      processors: [memory_limiter ,batch ,filter/metrics ]
+      processors: [memory_limiter, filter/metrics ,batch]
       exporters: [prometheus]
 
     logs:
       receivers: [otlp]
-      processors: [memory_limiter ,batch]
-      exporters: [debug]
+      processors: [memory_limiter, filter/logs, batch]
+      exporters: [otlphttp/loki]
